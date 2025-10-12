@@ -48,7 +48,7 @@ Score calculation for a typical RNA (~100 nucleotides) with ~200 3D structures t
 
 ## Detailed Instructions
 
-Follow the provided notebook for detailed explanation of the installation, scoring and score analysis.
+Follow the provided [notebook](./PARSEbp_colab.ipynb) for detailed explanation of the installation, scoring and score analysis.
 
 ## Datasets
 
