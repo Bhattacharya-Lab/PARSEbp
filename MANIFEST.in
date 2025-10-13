@@ -1,0 +1,8 @@
+# Include executables inside the package
+recursive-include PARSEbp/bin *
+
+# Include example input data in the root directory
+recursive-include Inputs *
+
+# Exclude temp/compiled files
+global-exclude __pycache__ *.py[cod] .DS_Store
