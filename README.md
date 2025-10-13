@@ -61,7 +61,6 @@ score.getScore("decoy_1.pdb")
 score.top1()
 
 # Get top-N ranked decoys
-
 score.topN(10)
 ```
 
