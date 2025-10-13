@@ -24,8 +24,10 @@ Typical installation time should take less than a minute in a 64-bit Linux syste
 Instructions for running PARSEbp:
 
 ```python
-# Initialize PARSEbp
+# Import
 from PARSEbp import parsebp
+
+# Initialize
 p = parsebp()
 
 # Set target sequence to "" for sequence-agnostic scoring
