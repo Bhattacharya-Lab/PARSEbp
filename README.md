@@ -51,7 +51,7 @@ p.set_mode(1)
 seq = "GGACACGAGUAACUCGUCUAUCUGCUGCAGGCUGCUUACGGUUUCGUCCGUGUUGCAGCCGAUCAUCAGAACAUCUAGGUUUCGUCCGGGUGUUACCGAAAGGUCAGAUGGAGAGCCUUGUCCC"
 p.set_target_sequnece(seq)
 
-# Set the number of threads for parallel pairwise score computations (default is 50)
+# Set the number of threads for parallel computations (default is 50)
 p.set_parallel_threads(50)
 
 # Get score of a specific model
