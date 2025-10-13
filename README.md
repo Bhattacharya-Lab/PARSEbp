@@ -28,6 +28,7 @@ Instructions for running PARSEbp:
 from PARSEbp import parsebp
 p = parsebp()
 
+# Set target sequence to "" for sequence-agnistic scoring
 p.set_target_sequnece("")
 
 # Load a directory containing RNA 3D structures (.pdb files)
@@ -43,7 +44,7 @@ score.save("score.txt")
 Additional functionality
 
 ```python
-# Set scoring mode (default is 0)
+# Set scoring mode (default is 1)
 p.set_mode(1)
 
 # Set the number of threads for parallel pairwise score computations (default is 50)
