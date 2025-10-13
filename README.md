@@ -23,22 +23,40 @@ Typical installation time should take less than a minute in a 64-bit Linux syste
 
 Instructions for running PARSEbp:
 
-```
+```python
+# Initialize PARSEbp
 from PARSEbp import parsebp
 p = parsebp()
+
 p.set_target_sequnece("")
+
+# Load a directory containing RNA 3D structures (.pdb files)
 p.load_pdbs("Inputs/")
+
+# Compute scores
 score = p.score()
+
+# Save the results
 score.save("score.txt")
 ```
 
 Additional functionality
 
-```
+```python
+# Set scoring mode (default is 0)
 p.set_mode(1)
+
+# Set the number of threads for parallel pairwise score computations (default is 50)
 p.set_parallel_threads(50)
+
+# Get score of a specific model
 score.getScore("decoy_1.pdb")
+
+# Get top-1 ranked model(s)
 score.top1()
+
+# Get top-N ranked decoys
+
 score.topN(10)
 ```
 
