@@ -2,6 +2,9 @@
 
 by Sumit Tarafder and Debswapna Bhattacharya
 
+[[bioRxiv](https://www.biorxiv.org/content/10.1101/2025.10.13.682106v1)] [[pdf](https://www.biorxiv.org/content/10.1101/2025.10.13.682106v1.full.pdf)]
+
+
 Codebase for our <ins>P</ins>airwise <ins>A</ins>greement-based <ins>R</ins>NA <ins>S</ins>coring with <ins>E</ins>mphasis on <ins>B</ins>ase <ins>P</ins>airings (PARSEbp).
 
 ## Installation
