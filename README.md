@@ -85,5 +85,5 @@ Follow the provided [notebook](./PARSEbp_colab.ipynb) for detailed explanation o
 ## Ground truths
 
 - Ground truth scores for benchmarking PARSEbp on CASP16 is downloaded from [here](https://predictioncenter.org/casp16/results.cgi?tr_type=rna) and CASP15 from [here](https://predictioncenter.org/casp15/results.cgi?tr_type=rna).
-- Ground truth scores used to evaluate PARSEbp is available [here](https://doi.org/10.5281/zenodo.18665337)
+- Ground truth scores used to evaluate PARSEbp is available [here](httpare//doi.org/10.5281/zenodo.18665337).
 
