@@ -80,7 +80,10 @@ Follow the provided [notebook](./PARSEbp_colab.ipynb) for detailed explanation o
 ## Datasets
 
 - CASP16 3D decoy structures (all submitted predictions) are downloaded from [here](https://predictioncenter.org/download_area/CASP16/predictions/RNA/). 
-- Ground truth scores for benchmarking PARSEbp on CASP16 is downloaded from [here](https://predictioncenter.org/casp16/results.cgi?tr_type=rna)
-- CASP15 3D decoy structures (all submitted predictions) are downloaded from [here](https://predictioncenter.org/download_area/CASP15/predictions/RNA/). 
-- Ground truth scores for benchmarking PARSEbp on CASP15 is downloaded from [here](https://predictioncenter.org/casp15/results.cgi?tr_type=rna)
+- CASP15 3D decoy structures (all submitted predictions) are downloaded from [here](https://predictioncenter.org/download_area/CASP15/predictions/RNA/).
+
+## Ground truths
+
+- Ground truth scores for benchmarking PARSEbp on CASP16 is downloaded from [here](https://predictioncenter.org/casp16/results.cgi?tr_type=rna) and CASP15 from [here](https://predictioncenter.org/casp15/results.cgi?tr_type=rna).
+- Ground truth scores used to evaluate PARSEbp is available [here](https://doi.org/10.5281/zenodo.18665337)
 
