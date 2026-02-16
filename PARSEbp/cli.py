@@ -23,7 +23,7 @@ def main():
     )
     parser.add_argument(
         "--pdb_dir", type=str,  default="./Inputs",
-        help="Path to the directory containing the RNA 3D structural ensemble (PDB files)."
+        help="Path to the directory containing the RNA 3D structural ensemble (PDB/mmcif/cif files)."
     )
     parser.add_argument(
         "--output", type=str, default="./score.txt",
@@ -31,7 +31,7 @@ def main():
     )
     parser.add_argument(
         "--target_seq", type=str,  default="",
-        help="Target sequence to match and filter the pdb files in the specified directory.(default = "")"
+        help="Target sequence to match and filter the structure files in the specified directory.(default = "")"
     )
 
     args = parser.parse_args()
@@ -41,7 +41,7 @@ def main():
     p.set_parallel_threads(args.num_threads)
     p.set_target_sequnece(args.target_seq)
 
-    p.load_pdbs(args.pdb_dir)
+    p.load_structures(args.pdb_dir)
     
     score = p.score()
     score.save(args.output)

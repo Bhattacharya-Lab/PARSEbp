@@ -1,7 +1,9 @@
-import os, math, time, argparse, re, tempfile, subprocess, sys, stat
+import os, math, time, argparse, re, tempfile, subprocess, sys, stat, gemmi
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import numpy as np
+
+from Bio.PDB import PDBParser, MMCIFParser
 
 class ScoreResult:
     def __init__(self, score_arr, decoylist, rejected_pdblist):
@@ -79,9 +81,65 @@ class parsebp:
         self.rejected_pdblist = []
 
         self.usalign = self._get_executable("USalign")
-        self.mcann = self._get_executable("MC-Annotate") 
+        self.mcann = self._get_executable("MC-Annotate")
 
-    def _get_executable(self, name: str) -> str:
+    def convert_pdbs(self, decoy, src_path, tmpdir):
+    
+        ext = os.path.splitext(src_path)[1].lower()
+        if ext in [".cif", ".mmcif"]:
+            base = os.path.splitext(decoy)[0]
+            out_pdb = os.path.join(tmpdir, f"{base}.pdb")
+            st = gemmi.read_structure(src_path)
+            st.remove_alternative_conformations()
+            st.write_pdb(out_pdb)
+            return out_pdb
+        
+        return src_path
+
+
+    def get_sequence_and_length(self, structure_file):
+        is_cif = structure_file.lower().endswith((".cif", ".mmcif"))
+        parser = MMCIFParser(QUIET=True) if is_cif else PDBParser(QUIET=True)
+
+        structure = parser.get_structure("x", structure_file)
+
+        # Map common residue names to 1-letter codes
+        res_to_nt = {
+            "A": "A", "C": "C", "G": "G", "U": "U", "I": "I"
+        }
+
+        for model in structure:
+            # pick the first chain that has nucleotide residues
+            for chain in model:
+                nts = []
+                seen = set()
+
+                for res in chain:
+                    hetflag, resseq, icode = res.id
+                    if hetflag != " ":
+                        continue  # skip HETATM/water/etc.
+
+                    rname = res.resname.strip()
+                    if rname not in res_to_nt:
+                        continue
+
+                    key = (resseq, icode)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+
+                    nts.append(res_to_nt[rname])
+
+                if nts:
+                    seq = "".join(nts)
+                    return seq, len(seq)
+
+            break 
+
+        return "", 0
+
+
+    def _get_executable(self, name):
         """Get absolute path to bundled executable and ensure +x permissions."""
         exe_path = os.path.join(self.base_dir, "bin", name)
 
@@ -106,15 +164,18 @@ class parsebp:
 
         self.num_threads = num_threads
 
-    def load_pdbs(self, dir_path):
+    def load_structures(self, dir_path):
         """
-        Load all PDBs from a directory.
-        If self.target_sequence == "", all PDBs are accepted.
+        Load all structures (pdb or cif/mmcif) from a directory.
+        If self.target_sequence == "", all structures are accepted.
         Otherwise, only those with matching sequence are kept.
         """
 
         self.pdb_dir = dir_path
-        all_pdb_files = [f for f in os.listdir(dir_path) if f.endswith(".pdb")]
+
+        all_pdb_files = [f for f in os.listdir(dir_path)
+                 if f.endswith((".pdb", ".cif", ".mmcif"))]
+
 
         seq_lengths = []
 
@@ -122,7 +183,7 @@ class parsebp:
         self.pdblist = []
         self.rejected_pdblist = []
 
-        for fname in tqdm(all_pdb_files, desc="Loading PDBs"):
+        for fname in tqdm(all_pdb_files, desc="Loading structures"):
             full_path = os.path.join(dir_path, fname)
 
             seq, length = self.get_sequence_and_length(full_path)
@@ -141,43 +202,16 @@ class parsebp:
             self.length = len(self.target_sequence)
 
         if len(self.pdblist) == 0:
-            sys.exit("No PDBs to score in specified input directory")
+            sys.exit("No structure to score in the specified input directory")
         if len(self.pdblist) == 1:
-            sys.exit("You must provide atleast 2 PDBs to score in the specified input directory")
+            sys.exit("You must provide atleast 2 structures to score in the specified input directory")
         
-        print(f"Loaded {len(self.pdblist)} matching PDBs to score, rejected {len(self.rejected_pdblist)}")
+        print(f"Loaded {len(self.pdblist)} matching structures to score, rejected {len(self.rejected_pdblist)}")
         
         if self.rejected_pdblist:
-            print("Rejected pdbs:")
+            print("Rejected structures:")
             for f in self.rejected_pdblist:
                 print(f)
-
-        
-        
-    def get_sequence_and_length(self, pdbfilename):
-        """
-        Extract the sequence and its length from a PDB file.
-        Returns (sequence_string, length).
-        """
-        sequence = []
-        seen_residues = set()
-
-        with open(pdbfilename, 'r', encoding='utf-8') as f:
-            for line in f:
-                if line.startswith("TER"):
-                    break
-                if not line.startswith("ATOM"):
-                    continue
-
-                res_name = line[17:20].strip()    # residue name (e.g., A, G, C, U)
-                res_id = int(line[22:26].strip()) # residue number
-
-                if res_id not in seen_residues:
-                    seen_residues.add(res_id)
-                    sequence.append(res_name)
-
-        seq_str = "".join(sequence)
-        return seq_str, len(seq_str)
 
     def parseTMscore(self, filename):
         """Parse USalign log file and return the main TM-score."""
@@ -347,14 +381,20 @@ class parsebp:
         
         start_t = time.time()
 
-        # # Step 1: build pairwise matrix
         matrix = self.compute_pairwise_matrix_upper(self.pdblist, func = self.calcTM, num_threads = self.num_threads)
 
         if self.mode:
 
-            ssmaps = self.extract2D(self.pdblist, self.length, num_threads = self.num_threads)
+            with tempfile.TemporaryDirectory() as tmpdir:
+                
+                pdblist_tmp = [
+                    self.convert_pdbs(decoy, path, tmpdir)
+                    for decoy, path in zip(self.decoylist, self.pdblist)
+                ]
+
+                ssmaps = self.extract2D(pdblist_tmp, self.length, num_threads = self.num_threads)
         
-            matrixSS = self.compute_pairwise_matrix_upper(ssmaps, func = self.calcINF, num_threads = self.num_threads)
+                matrixSS = self.compute_pairwise_matrix_upper(ssmaps, func = self.calcINF, num_threads = self.num_threads)
         
             matrix = matrix * matrixSS
 

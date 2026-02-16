@@ -36,8 +36,8 @@ p = parsebp()
 # Set target sequence to "" for sequence-agnostic scoring
 p.set_target_sequnece("")
 
-# Load a directory containing RNA 3D structures (.pdb files)
-p.load_pdbs("Inputs/")
+# Load a directory containing RNA 3D structures (pdb or mmcif/cif files)
+p.load_structures("Inputs/")
 
 # Compute scores
 score = p.score()
@@ -80,5 +80,7 @@ Follow the provided [notebook](./PARSEbp_colab.ipynb) for detailed explanation o
 ## Datasets
 
 - CASP16 3D decoy structures (all submitted predictions) are downloaded from [here](https://predictioncenter.org/download_area/CASP16/predictions/RNA/). 
-- Ground truth scores for benchmarking PARSEbp is downloaded from [here](https://predictioncenter.org/casp16/results.cgi?tr_type=rna)
+- Ground truth scores for benchmarking PARSEbp on CASP16 is downloaded from [here](https://predictioncenter.org/casp16/results.cgi?tr_type=rna)
+- CASP15 3D decoy structures (all submitted predictions) are downloaded from [here](https://predictioncenter.org/download_area/CASP15/predictions/RNA/). 
+- Ground truth scores for benchmarking PARSEbp on CASP15 is downloaded from [here](https://predictioncenter.org/casp15/results.cgi?tr_type=rna)
 
