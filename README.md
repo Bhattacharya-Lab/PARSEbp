@@ -4,7 +4,7 @@ by Sumit Tarafder and Debswapna Bhattacharya
 
 published in [Bioinformatics Advances](https://doi.org/10.1093/bioadv/vbag112)
 
-Codebase for our <ins>P</ins>airwise <ins>A</ins>greement-based <ins>R</ins>NA <ins>S</ins>coring with <ins>E</ins>mphasis on <ins>B</ins>ase <ins>P</ins>airings (PARSEbp).
+Codebase for our <ins>P</ins>airwise <ins>A</ins>greement-based <ins>R</ins>NA <ins>S</ins>coring with <ins>E</ins>mphasis on <ins>B</ins>ase <ins>P</ins>airings (PARSEbp) method.
 
 ## Installation
 ```
